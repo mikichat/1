@@ -201,6 +201,7 @@ function collectFormData() {
     const getHtml = (id) => document.getElementById(id)?.innerHTML || '';
 
     const data = {
+        type: 'golf', // 데이터 타입을 명시
         // 디자인
         design: {
             titleFont: getValue('titleFont'), titleColor: getValue('titleColor'),
