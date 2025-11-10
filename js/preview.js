@@ -245,7 +245,7 @@ function renderNotes(notes) {
     return `
         <div class="section-box pink">
             <h2 class="text-2xl font-bold text-pink-700 mb-4"><i class="fas fa-info-circle mr-2"></i>추가 안내사항</h2>
-            <div class="text-gray-700 ql-editor-content">${notes}</div>
+            <div class="text-gray-700 ql-editor-content">${notes.replace(/\n/g, '<br>')}</div>
         </div>
     `;
 }
