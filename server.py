@@ -1,18 +1,43 @@
 import http.server
 import socketserver
 import json
-import os
+import sqlite3
 from pathlib import Path
 
 PORT = 8000
-DB_FILE = Path(__file__).parent / 'database.json'
+DB_FILE = Path(__file__).parent / 'database.db'
 
-def ensure_db_exists():
-    """Ensures the database.json file exists with a default structure."""
-    if not DB_FILE.exists():
-        print(f"'{DB_FILE}' not found, creating a new one.")
-        with open(DB_FILE, 'w', encoding='utf-8') as f:
-            json.dump({"trips": [], "templates": []}, f, indent=4)
+def init_db():
+    """Initializes the database and creates tables if they don't exist."""
+    try:
+        con = sqlite3.connect(DB_FILE)
+        cur = con.cursor()
+        
+        # Create trips table
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS trips (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                data TEXT NOT NULL,
+                saved_at TEXT NOT NULL
+            )
+        ''')
+        
+        # Create templates table
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS templates (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                data TEXT NOT NULL,
+                saved_at TEXT NOT NULL
+            )
+        ''')
+        
+        con.commit()
+        con.close()
+        print(f"Database '{DB_FILE}' initialized successfully.")
+    except Exception as e:
+        print(f"Error initializing database: {e}")
 
 class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
     """A custom request handler to serve static files and handle API requests."""
@@ -22,7 +47,6 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         if self.path == '/api/trips' or self.path == '/api/templates':
             self.handle_api_get()
         else:
-            # Serve static files
             super().do_GET()
 
     def do_POST(self):
@@ -33,55 +57,79 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_error(404, "File Not Found")
 
     def handle_api_get(self):
-        """Handles GET requests to API endpoints."""
+        """Handles GET requests to API endpoints using SQLite."""
+        table_name = self.path.split('/')[-1]
+        if table_name not in ['trips', 'templates']:
+            self.send_error(404, "Invalid API endpoint")
+            return
+
         try:
-            with open(DB_FILE, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+            con = sqlite3.connect(DB_FILE)
+            con.row_factory = sqlite3.Row
+            cur = con.cursor()
             
-            key = self.path.split('/')[-1] # 'trips' or 'templates'
-            
+            cur.execute(f"SELECT * FROM {table_name} ORDER BY saved_at DESC")
+            rows = cur.fetchall()
+            con.close()
+
+            # Convert rows to list of dicts, parsing the 'data' field from JSON string
+            results = []
+            for row in rows:
+                item = dict(row)
+                item['data'] = json.loads(item['data'])
+                results.append(item)
+
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps(data.get(key, [])).encode('utf-8'))
+            self.wfile.write(json.dumps(results).encode('utf-8'))
 
         except Exception as e:
-            self.send_error(500, f"Server error: {e}")
+            self.send_error(500, f"Server error on GET: {e}")
 
     def handle_api_post(self):
-        """Handles POST requests to API endpoints."""
+        """Handles POST requests to API endpoints using SQLite."""
+        table_name = self.path.split('/')[-1]
+        if table_name not in ['trips', 'templates']:
+            self.send_error(404, "Invalid API endpoint")
+            return
+            
         try:
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
             new_item = json.loads(post_data)
 
-            with open(DB_FILE, 'r+', encoding='utf-8') as f:
-                db_data = json.load(f)
-                key = self.path.split('/')[-1] # 'trips' or 'templates'
-                
-                if key in db_data:
-                    db_data[key].append(new_item)
-                else:
-                    db_data[key] = [new_item]
-                
-                f.seek(0)
-                f.truncate()
-                json.dump(db_data, f, indent=4, ensure_ascii=False)
+            # The 'data' field should be stored as a JSON string
+            name = new_item.get('name')
+            data_str = json.dumps(new_item.get('data', {}), ensure_ascii=False)
+            saved_at = new_item.get('savedAt')
+
+            if not all([name, data_str, saved_at]):
+                 self.send_error(400, "Missing required fields: name, data, savedAt")
+                 return
+
+            con = sqlite3.connect(DB_FILE)
+            cur = con.cursor()
+            cur.execute(f"INSERT INTO {table_name} (name, data, saved_at) VALUES (?, ?, ?)",
+                        (name, data_str, saved_at))
+            con.commit()
+            new_id = cur.lastrowid
+            con.close()
 
             self.send_response(201, "Created")
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps({"status": "success", "item": new_item}).encode('utf-8'))
+            response = {"status": "success", "id": new_id}
+            self.wfile.write(json.dumps(response).encode('utf-8'))
 
         except json.JSONDecodeError:
             self.send_error(400, "Invalid JSON")
         except Exception as e:
-            self.send_error(500, f"Server error: {e}")
+            self.send_error(500, f"Server error on POST: {e}")
 
 if __name__ == "__main__":
-    ensure_db_exists()
+    init_db()
     
     with socketserver.TCPServer(("", PORT), MyHttpRequestHandler) as httpd:
-        print("Serving at port", PORT)
-        print(f"URL: http://localhost:{PORT}")
+        print(f"Serving at http://localhost:{PORT}")
         httpd.serve_forever()
