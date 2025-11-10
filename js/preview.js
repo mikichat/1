@@ -215,8 +215,7 @@ function renderTravelSchedules(schedules) {
                 <h3 class="text-xl font-bold text-gray-800 mb-2">${schedule.day || schedule.title}</h3>
                 ${renderIf(schedule.date, v => `<div class="info-row"><span class="info-label">날짜</span><span class="info-value">${formatDate(v)}</span></div>`)}
                 ${renderIf(schedule.title, v => `<div class="info-row"><span class="info-label">일정</span><span class="info-value">${v}</span></div>`)}
-                ${renderIf(schedule.detail, v => `<div class="mt-3 p-3 bg-gray-50 rounded">${v.replace(/\n/g, '<br>')}<
-/div>`)}
+                ${renderIf(schedule.detail, v => `<div class="mt-3 p-3 bg-gray-50 rounded">${v.replace(/\n/g, '<br>')}</div>`)}
                 ${renderIf(schedule.hotel, v => `<div class="info-row"><span class="info-label">숙소</span><span class="info-value">${v}</span></div>`)}
                 ${renderIf(schedule.meal, v => `<div class="info-row"><span class="info-label">식사</span><span class="info-value">${v}</span></div>`)}
                 ${renderIf(schedule.image, v => `<img src="${v}" class="preview-image" alt="${schedule.title}">`)}
