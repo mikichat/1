@@ -345,10 +345,12 @@ function loadTravelFormData(data) {
             const el = document.querySelector(selector);
             if (el && src) {
                 el.src = src;
-                el.parentElement.classList.remove('hidden');
+                const previewContainer = el.closest('div[id$="Preview"], .schedule-image-preview');
+                if (previewContainer) previewContainer.classList.remove('hidden');
             }
         };
 
+        // Populate all simple fields
         setValue('title', content.title);
         setSrc('#titleImagePreview img', content.titleImage);
         setValue('startDate', content.startDate);
@@ -357,31 +359,63 @@ function loadTravelFormData(data) {
         setValue('meetingDate', content.meetingDate);
         setValue('meetingTime', content.meetingTime);
         setSrc('#meetingImagePreview img', content.meetingImage);
-        
-        // ... and so on for all other fields
-        
+        setValue('departureAirport', content.departureAirport);
+        setValue('arrivalAirport', content.arrivalAirport);
+        setValue('departureTime', content.departureTime);
+        setValue('arrivalTime', content.arrivalTime);
+        setValue('departureFlight', content.departureFlight);
+        setValue('departureFlightDuration', content.departureFlightDuration);
+        setValue('returnDepartureAirport', content.returnDepartureAirport);
+        setValue('returnArrivalAirport', content.returnArrivalAirport);
+        setValue('returnDepartureTime', content.returnDepartureTime);
+        setValue('returnArrivalTime', content.returnArrivalTime);
+        setValue('returnFlight', content.returnFlight);
+        setValue('returnFlightDuration', content.returnFlightDuration);
+        setSrc('#flightImagePreview img', content.flightImage);
+        setValue('additionalInfo', content.additionalInfo);
+        setValue('companyName', content.companyName);
+        setValue('companyPhone', content.companyPhone);
+        setValue('companyAddress', content.companyAddress);
+        setValue('managerName', content.managerName);
+        setValue('managerPhone', content.managerPhone);
+        setValue('managerEmail', content.managerEmail);
+        setSrc('#companyLogoPreview img', content.companyLogo);
+
         // Load schedules
         const scheduleContainer = document.getElementById('scheduleContainer');
+        const template = document.querySelector('.schedule-item')?.cloneNode(true);
+        
         scheduleContainer.innerHTML = ''; // Clear existing
+
         if (content.schedules && content.schedules.length > 0) {
             content.schedules.forEach(scheduleData => {
-                addScheduleItem();
-                const newItem = scheduleContainer.lastElementChild;
-                newItem.querySelector('.schedule-day').value = scheduleData.day;
-                newItem.querySelector('.schedule-date').value = scheduleData.date;
-                newItem.querySelector('.schedule-title').value = scheduleData.title;
-                newItem.querySelector('.schedule-detail').value = scheduleData.detail;
-                newItem.querySelector('.schedule-hotel').value = scheduleData.hotel;
-                newItem.querySelector('.schedule-meal').value = scheduleData.meal;
+                if (!template) return;
+                const newItem = template.cloneNode(true);
+                
+                newItem.querySelector('.schedule-day').value = scheduleData.day || '';
+                newItem.querySelector('.schedule-date').value = scheduleData.date || '';
+                newItem.querySelector('.schedule-title').value = scheduleData.title || '';
+                newItem.querySelector('.schedule-detail').value = scheduleData.detail || '';
+                newItem.querySelector('.schedule-hotel').value = scheduleData.hotel || '';
+                newItem.querySelector('.schedule-meal').value = scheduleData.meal || '';
+                
                 if (scheduleData.image) {
                     const preview = newItem.querySelector('.schedule-image-preview');
                     preview.querySelector('img').src = scheduleData.image;
                     preview.classList.remove('hidden');
+                } else {
+                    const preview = newItem.querySelector('.schedule-image-preview');
+                    preview.classList.add('hidden');
+                    preview.querySelector('img').src = '';
                 }
+                scheduleContainer.appendChild(newItem);
             });
-        } else {
+        } else if (template) {
             // Add one empty item if none are loaded
-            addScheduleItem();
+            const blankItem = template.cloneNode(true);
+            blankItem.querySelectorAll('input, textarea').forEach(input => input.value = '');
+            blankItem.querySelectorAll('.schedule-image-preview').forEach(p => p.classList.add('hidden'));
+            scheduleContainer.appendChild(blankItem);
         }
         updateRemoveButtons('.schedule-item', '.remove-schedule-item');
     }
