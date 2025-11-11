@@ -79,15 +79,15 @@ function renderData(data) {
         if (content.schedules && content.schedules.length > 0) html += renderGolfSchedules(content.schedules);
     } else if (data.type === 'travel') {
         // 일반 여행용 섹션
-        if (content.meetingPlace) html += renderTravelMeeting(content);
-        if (content.schedules && content.schedules.length > 0) html += renderTravelSchedules(content.schedules);
+        if (content.meetingPlace) html += renderTravelMeeting(content, data.design);
+        if (content.schedules && content.schedules.length > 0) html += renderTravelSchedules(content.schedules, data.design);
     }
 
     // 공통 섹션
-    if (content.departureAirport || content.arrivalAirport) html += renderFlight(content);
-    if (content.accommodation) html += renderAccommodation(content);
-    if (content.notes || content.additionalInfo) html += renderNotes(content.notes || content.additionalInfo);
-    if (content.companyName) html += renderCompany(content);
+    if (content.departureAirport || content.arrivalAirport) html += renderFlight(content, data.design);
+    if (content.accommodation) html += renderAccommodation(content, data.design);
+    if (content.notes || content.additionalInfo) html += renderNotes(content.notes || content.additionalInfo, data.design);
+    if (content.companyName) html += renderCompany(content, data.design);
     
     document.getElementById('contentArea').innerHTML = html;
 }
@@ -131,9 +131,14 @@ function renderLocalMeeting(meeting) {
     `;
 }
 
-function renderTravelMeeting(content) {
+function renderTravelMeeting(content, design = {}) {
+    const alignClass = design.meetingAlign ? `text-align-${design.meetingAlign}` : '';
+    const fontStyle = design.meetingFont ? `font-family: ${design.meetingFont}; ` : '';
+    const colorStyle = design.meetingColor ? `color: ${design.meetingColor}; ` : '';
+    const sectionStyle = `${fontStyle}${colorStyle}`;
+
      return `
-        <div class="section-box purple">
+        <div class="section-box purple ${alignClass}" style="${sectionStyle}">
             <h2 class="text-2xl font-bold text-purple-700 mb-4"><i class="fas fa-handshake mr-2"></i>미팅 정보</h2>
             ${renderIf(content.meetingPlace, v => `<div class="info-row"><span class="info-label">장소</span><span class="info-value">${v}</span></div>`)}
             ${renderIf(content.meetingDate, v => `<div class="info-row"><span class="info-label">날짜</span><span class="info-value">${formatDate(v)}</span></div>`)}
@@ -143,9 +148,14 @@ function renderTravelMeeting(content) {
     `;
 }
 
-function renderFlight(content) {
+function renderFlight(content, design = {}) {
+    const alignClass = design.flightAlign ? `text-align-${design.flightAlign}` : '';
+    const fontStyle = design.flightFont ? `font-family: ${design.flightFont}; ` : '';
+    const colorStyle = design.flightColor ? `color: ${design.flightColor}; ` : '';
+    const sectionStyle = `${fontStyle}${colorStyle}`;
+
     return `
-        <div class="section-box blue">
+        <div class="section-box blue ${alignClass}" style="${sectionStyle}">
             <h2 class="text-2xl font-bold text-blue-700 mb-4"><i class="fas fa-plane mr-2"></i>항공편 정보</h2>
             <h3 class="text-lg font-semibold text-blue-600 mt-4 mb-2">출발편</h3>
             ${renderIf(content.departureAirport, v => `<div class="info-row"><span class="info-label">출발 공항</span><span class="info-value">${v}</span></div>`)}
@@ -207,7 +217,12 @@ function renderGolfSchedules(schedules) {
             </div>`;
 }
 
-function renderTravelSchedules(schedules) {
+function renderTravelSchedules(schedules, design = {}) {
+    const alignClass = design.teeupAlign ? `text-align-${design.teeupAlign}` : '';
+    const fontStyle = design.teeupFont ? `font-family: ${design.teeupFont}; ` : '';
+    const colorStyle = design.teeupColor ? `color: ${design.teeupColor}; ` : '';
+    const sectionStyle = `${fontStyle}${colorStyle}`;
+
     let itemsHtml = schedules.map((schedule) => {
         if (!schedule.day && !schedule.title) return '';
         return `
@@ -223,15 +238,20 @@ function renderTravelSchedules(schedules) {
         `;
     }).join('');
 
-    return `<div class="section-box green">
+    return `<div class="section-box green ${alignClass}" style="${sectionStyle}">
                 <h2 class="text-2xl font-bold text-green-700 mb-4"><i class="fas fa-calendar-alt mr-2"></i>간략 일정표</h2>
                 ${itemsHtml}
             </div>`;
 }
 
-function renderAccommodation(content) {
+function renderAccommodation(content, design = {}) {
+    const alignClass = design.accommodationAlign ? `text-align-${design.accommodationAlign}` : '';
+    const fontStyle = design.accommodationFont ? `font-family: ${design.accommodationFont}; ` : '';
+    const colorStyle = design.accommodationColor ? `color: ${design.accommodationColor}; ` : '';
+    const sectionStyle = `${fontStyle}${colorStyle}`;
+
     return `
-        <div class="section-box orange">
+        <div class="section-box orange ${alignClass}" style="${sectionStyle}">
             <h2 class="text-2xl font-bold text-orange-700 mb-4"><i class="fas fa-hotel mr-2"></i>숙소 정보</h2>
             ${renderIf(content.accommodation, v => `<div class="info-row"><span class="info-label">숙소명</span><span class="info-value">${v}</span></div>`)}
             ${renderIf(content.accommodationAddress, v => `<div class="info-row"><span class="info-label">주소</span><span class="info-value">${v}</span></div>`)}
@@ -240,16 +260,26 @@ function renderAccommodation(content) {
     `;
 }
 
-function renderNotes(notes) {
+function renderNotes(notes, design = {}) {
+    const alignClass = design.additionalAlign ? `text-align-${design.additionalAlign}` : '';
+    const fontStyle = design.additionalFont ? `font-family: ${design.additionalFont}; ` : '';
+    const colorStyle = design.additionalColor ? `color: ${design.additionalColor}; ` : '';
+    const sectionStyle = `${fontStyle}${colorStyle}`;
+
     return `
-        <div class="section-box pink">
+        <div class="section-box pink ${alignClass}" style="${sectionStyle}">
             <h2 class="text-2xl font-bold text-pink-700 mb-4"><i class="fas fa-info-circle mr-2"></i>추가 안내사항</h2>
             <div class="text-gray-700 ql-editor-content">${notes.replace(/\n/g, '<br>')}</div>
         </div>
     `;
 }
 
-function renderCompany(content) {
+function renderCompany(content, design = {}) {
+    const alignClass = design.companyAlign ? `text-align-${design.companyAlign}` : '';
+    const fontStyle = design.companyFont ? `font-family: ${design.companyFont}; ` : '';
+    const colorStyle = design.companyColor ? `color: ${design.companyColor}; ` : '';
+    const sectionStyle = `${fontStyle}${colorStyle}`;
+
     const managerHtml = (content.managerName || content.managerPhone || content.managerEmail) ? `
         <div class="mt-4 p-3 bg-purple-50 rounded-lg">
             <h3 class="text-lg font-bold text-purple-700 mb-2"><i class="fas fa-user-tie mr-1"></i>담당자 정보</h3>
@@ -260,7 +290,7 @@ function renderCompany(content) {
     ` : '';
 
     return `
-        <div class="section-box purple">
+        <div class="section-box purple ${alignClass}" style="${sectionStyle}">
             <h2 class="text-2xl font-bold text-purple-700 mb-4"><i class="fas fa-building mr-2"></i>문의</h2>
             ${renderIf(content.companyName, v => `<div class="info-row"><span class="info-label">회사명</span><span class="info-value">${v}</span></div>`)}
             ${renderIf(content.companyPhone, v => `<div class="info-row"><span class="info-label">대표 전화번호</span><span class="info-value">${v}</span></div>`)}
