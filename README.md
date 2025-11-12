@@ -54,8 +54,8 @@
 - ✅ **글자 색상 커스터마이징** (타이틀, 헤더 배경색)
 - ✅ **글꼴 선택 적용** (8가지 한글 폰트)
 
-#### 🖥️ 백엔드 서버 (server.py)
-- ✅ Python HTTP 서버 구현
+#### 🖥️ 백엔드 서버 (server.js)
+- ✅ Node.js & Express.js 서버 구현
 - ✅ SQLite 데이터베이스 연동
 - ✅ RESTful API 엔드포인트
   - GET /api/trips - 저장된 안내문 목록 조회
@@ -67,9 +67,9 @@
 - ✅ 오류 처리 및 로깅
 
 #### 🚀 원클릭 실행 시스템 (start.bat)
-- ✅ Python 및 Node.js 설치 확인
+- ✅ Node.js 설치 확인
 - ✅ Tailwind CSS 자동 빌드 (실시간 감시)
-- ✅ Python 서버 자동 시작
+- ✅ Node.js 서버 자동 시작
 - ✅ UTF-8 인코딩 설정
 - ✅ 에러 메시지 한글화
 
@@ -82,9 +82,9 @@
    ```batch
    start.bat
    ```
-   - Python 및 Node.js 설치 확인
+   - Node.js 설치 확인
    - Tailwind CSS 빌드 자동 시작
-   - Python 서버 자동 시작
+   - Node.js 서버 자동 시작
    - 브라우저에서 `http://localhost:8000` 접속
 
 2. **수동 실행**
@@ -92,8 +92,8 @@
    # Tailwind CSS 빌드 (별도 터미널)
    npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css --watch
    
-   # Python 서버 시작
-   python server.py
+   # Node.js 서버 시작
+   node server.js
    ```
 
 #### 안내문 작성
@@ -170,24 +170,21 @@
 
 ## 📋 최신 업데이트
 
-### 🆕 2024-11-10: 서버 기반 시스템 구축
-- **Python 백엔드 서버 구현**
-  - SQLite 데이터베이스 연동
-  - RESTful API 제공 (/api/trips, /api/templates)
-  - 자동 데이터베이스 초기화
-  - JSON 데이터 처리 및 오류 처리
+### 🆕 2024-11-12: 백엔드 리팩토링 (Node.js)
+- **Node.js 백엔드 서버 구현**
+  - Express.js 프레임워크 사용
+  - SQLite 데이터베이스 연동 (기존 `database.db` 호환)
+  - RESTful API 재구현 (/api/trips, /api/templates)
+  - 기존 Python 서버를 Node.js 서버로 교체
 
-- **원클릭 실행 시스템**
-  - start.bat 배치 파일 생성
-  - Python 및 Node.js 자동 확인
-  - Tailwind CSS 자동 빌드
-  - 서버 자동 시작
-  - 한글 에러 메시지
+- **원클릭 실행 시스템 수정**
+  - start.bat 배치 파일이 `node server.js`를 실행하도록 업데이트
+  - Python 종속성 제거
 
-- **저장 시스템 개선**
-  - localStorage → 서버 기반 저장으로 전환
+- **저장 시스템 유지**
+  - 서버 기반 저장 방식 유지
   - 데이터 영구 보존
-  - 용량 제한 해결
+  - 용량 제한 없음
   - 안내문 및 템플릿 별도 테이블 관리
 
 ### 2024-11-03: 미팅 정보 & 일정 섹션 추가
@@ -240,7 +237,7 @@ travel-guide-system/
 │       └── main.js               # 골프 안내문 로직 ✅
 │
 ├── 🖥️ 백엔드 서버
-│   ├── server.py                 # Python HTTP 서버 ✅
+│   ├── server.js                 # Node.js Express 서버 ✅
 │   └── database.db               # SQLite 데이터베이스 (자동 생성)
 │
 ├── 🚀 실행 파일
@@ -264,40 +261,35 @@ travel-guide-system/
 - **Google Fonts & 커스텀 폰트** - 다양한 한글 폰트
 
 ### 백엔드
-- **Python 3** - HTTP 서버 구현
-- **http.server** - 내장 HTTP 서버 모듈
+- **Node.js** - JavaScript 런타임
+- **Express.js** - 웹 애플리케이션 프레임워크
 - **SQLite3** - 경량 데이터베이스
+- **CORS** - 교차 출처 리소스 공유
 - **JSON** - 데이터 직렬화
 
 ### 개발 도구
-- **Node.js & npm** - Tailwind CSS 빌드
+- **Node.js & npm** - 패키지 관리 및 빌드
 - **Batch Script** - Windows 자동화
 
 ## 🚀 설치 및 실행
 
 ### 필수 요구사항
-- Python 3.7 이상
 - Node.js 및 npm
 
 ### 설치 방법
 
-1. **Python 설치 확인**
-   ```bash
-   python --version
-   ```
-
-2. **Node.js 설치 확인**
+1. **Node.js 설치 확인**
    ```bash
    node --version
    npm --version
    ```
 
-3. **프로젝트 실행**
+2. **프로젝트 실행**
    ```batch
    start.bat
    ```
 
-4. **브라우저 접속**
+3. **브라우저 접속**
    ```
    http://localhost:8000
    ```
@@ -309,9 +301,9 @@ travel-guide-system/
    npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css --watch
    ```
 
-2. **Python 서버 시작**
+2. **Node.js 서버 시작**
    ```bash
-   python server.py
+   node server.js
    ```
 
 3. **브라우저 접속**

@@ -27,6 +27,6 @@ echo.
 echo Tailwind CSS 빌드 프로세스를 시작합니다 (실시간 감시)...
 start "Tailwind Watcher" npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css --watch
 
-:: Start Python backend server
-echo Python 백엔드 서버를 시작합니다...
-python server.py
+:: Start Node.js backend server
+echo Node.js 백엔드 서버를 시작합니다...
+node server.js
