@@ -27,6 +27,9 @@ function initializeDynamicFeatures() {
     // 폼 제출 (미리보기)
     document.getElementById('golfForm')?.addEventListener('submit', handleFormSubmit);
     
+    // 스타일 주석: 플로팅 미리보기 버튼 클릭 이벤트 추가
+    document.getElementById('floatingPreviewButton')?.addEventListener('click', handleFormSubmit);
+
     // 저장/불러오기/템플릿 버튼
     document.getElementById('saveButton')?.addEventListener('click', showSaveModal);
     document.getElementById('loadButton')?.addEventListener('click', showLoadModal);
