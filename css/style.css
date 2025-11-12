@@ -573,3 +573,19 @@ hr {
         gap: 15px;
     }
 }
+
+/* 스타일 주석: 미리보기 & 공유하기 플로팅 버튼 */
+.floating-preview-button {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1000;
+}
+
+/* 모바일 화면에서 버튼 크기 조정 */
+@media (max-width: 768px) {
+    .floating-preview-button button {
+        padding: 12px 20px; /* 버튼 패딩 조정 */
+        font-size: 1rem; /* 폰트 크기 조정 */
+    }
+}

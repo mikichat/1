@@ -27,6 +27,9 @@ function initializeDynamicFeatures() {
     document.getElementById('confirmTemplateSave')?.addEventListener('click', handleSaveTemplate);
     document.getElementById('closeTemplateSave')?.addEventListener('click', () => hideModal('templateSaveModal'));
     document.getElementById('closeTemplateLoad')?.addEventListener('click', () => hideModal('templateLoadModal'));
+
+    // 스타일 주석: 플로팅 미리보기 버튼 클릭 이벤트 추가
+    document.getElementById('floatingPreviewButton')?.addEventListener('click', handleFormSubmit);
 }
 
 function addScheduleItem() {
