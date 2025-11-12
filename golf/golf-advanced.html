@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../fonts/custom-fonts.css">
+    <link rel="stylesheet" href="../css/style.css">
     
     <!-- Quill Editor -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
@@ -37,8 +38,25 @@
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="max-w-4xl mx-auto">
+<body class="">
+    <!-- 스타일 주석: 고정 사이드 메뉴 추가 -->
+    <nav class="side-menu">
+        <div class="menu-header">
+            <a href="../index.html">🚀 여행 안내문</a>
+        </div>
+        <ul>
+            <li><a href="../golf/golf-advanced.html">⛳ 골프 여행</a></li>
+            <li><a href="../travel/travel-advanced.html">✈️ 일반 여행</a></li>
+            <li><a href="../excel/excel-import.html">📊 엑셀로 입력</a></li>
+        </ul>
+        <div class="menu-footer">
+            <p>&copy; 2024</p>
+        </div>
+    </nav>
+
+    <!-- 스타일 주석: 메인 콘텐츠 영역 설정 -->
+    <div class="main-content p-4 md:p-8">
+        <div class="max-w-4xl mx-auto">
         <div class="card p-8 md:p-12">
             <!-- 헤더 -->
             <div class="text-center mb-8">
@@ -1032,6 +1050,10 @@
                 </div>
             </form>
         </div>
+    </div>
+
+        </div>
+    </div>
     </div>
 
     <!-- 저장 모달 -->
